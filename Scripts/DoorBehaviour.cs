@@ -2,38 +2,43 @@ using UnityEngine;
 
 public class DoorBehaviour : MonoBehaviour
 {
-    [SerializeField] private Transform doorMesh;
+    public Transform door; 
+    public float openAngle = 90f; // door rotates 90 degree when open
+    public float closedAngle = 0f; // door close
+    public float rotationSpeed = 2f; // speed of rotation
 
     private bool isOpen = false;
-    private float openAngle = 90f;
-    private float closedAngle = 0f;
-    
-    public void Interact()
-{
-    Debug.Log("[DoorBehaviour] Interact called!");
+    private bool playerNear = false;
 
-    if (doorMesh == null)
+    void Update()
     {
-        Debug.LogWarning("[DoorBehaviour] doorMesh not assigned, using self.");
-        doorMesh = this.transform;
+        if (playerNear && Input.GetKeyDown(KeyCode.E))
+        {
+            isOpen = !isOpen; 
+        }
+
+        float targetAngle = isOpen ? openAngle : closedAngle;
+        Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+        door.rotation = Quaternion.Slerp(door.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
-    Vector3 doorRotation = doorMesh.localEulerAngles;
-
-    if (!isOpen)
+    // when player enters trigger zone
+    private void OnTriggerEnter(Collider other)
     {
-        doorRotation.y = openAngle;
+        if (other.CompareTag("Player"))
+        {
+            playerNear = true;
+            Debug.Log("Player near door. Press E to open/close.");
+        }
     }
-    else
+
+    // when player leaves trigger zone
+    private void OnTriggerExit(Collider other)
     {
-        doorRotation.y = closedAngle;
+        if (other.CompareTag("Player"))
+        {
+            playerNear = false;
+            Debug.Log("Player left door area.");
+        }
     }
-
-    doorMesh.localEulerAngles = doorRotation;
-    isOpen = !isOpen;
-
-    Debug.Log("[DoorBehaviour] New door rotation: " + doorMesh.localEulerAngles);
-}
-
-
 }
