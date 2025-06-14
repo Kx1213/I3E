@@ -2,15 +2,32 @@ using UnityEngine;
 
 public class CoinBehaviour : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    MeshRenderer MyMeshRenderer;
+    public int value = 1;
+
+    [SerializeField]
+    Material hightlightMat;
+    Material originalMat;
+
+    void Start() 
     {
-        
+        MyMeshRenderer = GetComponent<MeshRenderer>(); 
+        originalMat = MyMeshRenderer.material;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Highlight() 
     {
-        
+        MyMeshRenderer.material = hightlightMat; 
+    }
+
+    public void UnHighlight() 
+    {
+        MyMeshRenderer.material = originalMat; 
+    }
+
+    public void Collect(PlayerBehaviour player)
+    {
+        player.ModifyScore(value);
+        Destroy(gameObject);
     }
 }

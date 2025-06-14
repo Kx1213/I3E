@@ -8,6 +8,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     bool canInteract = false;
     CoinBehaviour currentCoin;
+    DoorBehaviour currentDoor;
 
     [SerializeField] GameObject projectile;
     [SerializeField] Transform spawnPoint;
@@ -99,14 +100,18 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
     }
-
-    void OnTriggerEnter(Collider other)
+        void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other.gameObject.name);
         if (other.CompareTag("Collectible"))
         {
-            Debug.Log("Player is near " + other.gameObject.name);
-            currentCoin = other.GetComponent<CoinBehaviour>();
             canInteract = true;
+            currentCoin = other.GetComponent<CoinBehaviour>();
+        }
+        else if (other.CompareTag("Door"))
+        {
+            canInteract = true;
+            currentDoor = other.GetComponent<DoorBehaviour>();
         }
     }
 
@@ -119,6 +124,22 @@ public class PlayerBehaviour : MonoBehaviour
                 canInteract = false;
                 currentCoin = null;
                 Debug.Log("Moved away from coin");
+            }
+        }
+    }
+    void OnInteract()
+    {
+        if (canInteract)
+        {
+            if (currentCoin != null)
+            {
+                Debug.Log("Interacting with coin");
+                currentCoin.Collect(this);
+            }
+            else if (currentDoor != null)
+            {
+                Debug.Log("Interacting with door");
+                currentDoor.Interact();
             }
         }
     }
