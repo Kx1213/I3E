@@ -47,13 +47,30 @@ public class PlayerBehaviour : MonoBehaviour
 
                 Debug.Log("[Raycast] Coin detected and highlighted");
             }
+            else if (hitInfo.collider.CompareTag("Door"))
+            {
+                canInteract = true;
+                currentDoor = hitInfo.collider.GetComponent<DoorBehaviour>();
+                Debug.Log("[Raycast] Door detected in front: " + currentDoor?.name);
+            }
         }
-        else if (currentCoin != null)
+        else
         {
-            Debug.Log("[Raycast] No collectible in view, unhighlighting");
-            currentCoin.UnHighlight();
-            currentCoin = null;
+            if (currentCoin != null)
+            {
+                currentCoin.UnHighlight();
+                currentCoin = null;
+            }
+
+            if (currentDoor != null)
+            {
+                Debug.Log("[Raycast] No door in front, clearing reference");
+                currentDoor = null;
+            }
+
+            canInteract = false;
         }
+
 
         // Interaction input
         if (canInteract && Input.GetKeyDown(KeyCode.E))
