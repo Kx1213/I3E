@@ -6,7 +6,7 @@ public class MonsterBehaviour : MonoBehaviour
     [SerializeField] GameObject coinPrefab;
     [SerializeField] int coinCount = 1;
     [SerializeField] float spawnSpread = 0.5f;
-    [SerializeField] float moveSpeed = 2f;
+    [SerializeField] float moveSpeed = 3f;
     [SerializeField] Transform player;
     [SerializeField] Transform respawnPoint;
 

@@ -1,9 +1,10 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerBehaviour : MonoBehaviour
 {
     int score = 0;
-    int currentHealth = 10;
+    int currentHealth = 100;
     int maxHealth = 100;
 
     bool canInteract = false;
@@ -13,7 +14,15 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField] GameObject projectile;
     [SerializeField] Transform spawnPoint;
     [SerializeField] float FireStrength = 0f;
-    [SerializeField] float interactionDistance = 3f;
+    [SerializeField] float interactionDistance = 6f;
+    [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] TextMeshProUGUI victoryText; 
+
+    void Start()
+    {
+        scoreText.text = "Ingredients Collected: " + score;
+        victoryText.gameObject.SetActive(false);  
+    }
 
     void Update()
     {
@@ -52,7 +61,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     void HandleRaycast()
     {
-        // Reset interaction state
         canInteract = false;
         currentCoin = null;
         currentDoor = null;
@@ -69,7 +77,6 @@ public class PlayerBehaviour : MonoBehaviour
                 currentCoin = hitObj.GetComponent<CoinBehaviour>();
                 if (currentCoin != null)
                 {
-                    currentCoin.Highlight();
                     canInteract = true;
                 }
             }
@@ -107,21 +114,23 @@ public class PlayerBehaviour : MonoBehaviour
     public void ModifyScore(int amount)
     {
         score += amount;
+        scoreText.text = "Ingredients Collected: " + score;
         Debug.Log("[Score] Modified. New score: " + score);
+
+        if (score >= 10)
+        {
+            victoryText.text = "You made an Egg Fried Rice!";
+            victoryText.gameObject.SetActive(true);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("[CollisionEnter] Collided with: " + collision.gameObject.name);
 
-        if (collision.gameObject.CompareTag("Collectible"))
+        if (collision.gameObject.CompareTag("Hazard"))
         {
-            ++score;
-            Debug.Log("[CollisionEnter] Collected item. Score: " + score);
-        }
-        else if (collision.gameObject.CompareTag("Hazard"))
-        {
-            currentHealth -= 35;
+            currentHealth -= 100;
             Debug.Log("[CollisionEnter] Hit hazard. Health: " + currentHealth);
             if (currentHealth < 1)
             {
